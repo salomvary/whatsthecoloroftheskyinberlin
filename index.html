@@ -8,17 +8,17 @@
 			html, body {
 				padding: 0;
 				margin: 0;
+				color: #333;
 			}
 			html {
 				font-family: sans-serif;
 				text-align: center;
 				font-size: 12px;
 			}
-			html, a {
-				color: #666;
+			a {
+				color: inherit;
 			}
 			h1 {
-				color: #333;
 				font-size: 15px;
 			}
 			strong {
@@ -33,6 +33,7 @@
 				position: fixed;
 				bottom: 0;
 				width: 100%;
+				opacity: .5;
 			}
 		</style>
 		<script>
@@ -77,8 +78,8 @@
 
 				// show color
 				document.body.style.background = 'rgb(' + color.join(',') + ')';
+				document.body.style.color = 'rgb(' + color.map(function(c) { return 255 - c; }).join(',') + ')';
 				var target = document.getElementById('color');
-				target.style.color = 'rgb(' + color.map(function(c) { return 255 - c; }).join(',') + ')';
 				target.innerHTML = '#' + color.map(function(c) { return c.toString(16); }).join('');
 			}
 		</script>
