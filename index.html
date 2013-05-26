@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+	<head>
+		<title>What's the Color of the Sky in Berlin?</title>
+		<meta charset="utf8">
+		<meta name="viewport" content="width=device-width">
+		<style>
+			html, body {
+				padding: 0;
+				margin: 0;
+			}
+			html {
+				font-family: sans-serif;
+				text-align: center;
+				font-size: 12px;
+			}
+			html, a {
+				color: #666;
+			}
+			h1 {
+				color: #333;
+				font-size: 15px;
+			}
+			strong {
+				font-size: 55px;
+				display: block;
+				position: fixed;
+				top: 50%;
+				margin-top: -50px;
+				width: 100%;
+			}
+			footer {
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+			}
+		</style>
+		<script>
+			var yql = 'http://query.yahooapis.com/v1/public/yql?format=json&callback=imageLoaded&q=',
+					query = 'select * from data.uri where url="http://www.met.fu-berlin.de/wetter/webcam/Cam00_prev.jpg"';
+					img = new Image,
+			    canvas = document.createElement("canvas"),
+			    ctx = canvas.getContext("2d");
+
+			var script = document.createElement('script');
+			script.src = yql + encodeURIComponent(query);
+			document.head.appendChild(script);
+
+			function imageLoaded(response) {
+				img.src = response.query.results.url;
+			}
+
+			img.onload = function() {
+				canvas.width = img.width;
+				canvas.height = img.height;
+				ctx.drawImage( img, 0, 0 );
+
+				// slice off the sky
+				var padding = 1, cut = .6;
+				var data = ctx.getImageData(
+						padding, // top
+						padding, // left
+						img.width - 2 * padding, // width
+						Math.round((img.height - 2 * padding) * cut) ).data;
+
+				// calculate average color
+				var color = [0, 0, 0];
+				for(var i = 0; i < data.length; i += 4) {
+					for(var j = 0; j < 3; j++) {
+						color[j] += data[i + j];
+					}
+				}
+				var count = data.length / 4;
+				color = color.map(function(c) {
+						return Math.round(c / count);
+				});
+
+				// show color
+				document.body.style.background = 'rgb(' + color.join(',') + ')';
+				var target = document.getElementById('color');
+				target.style.color = 'rgb(' + color.map(function(c) { return 255 - c; }).join(',') + ')';
+				target.innerHTML = '#' + color.map(function(c) { return c.toString(16); }).join('');
+			}
+		</script>
+	</head>
+	<body title="Yeah, that's the color of it...">
+		<header>
+			<h1>What's the Color of the Sky in Berlin?</h1>
+		</header>
+		<strong id="color">Loading...</strong>
+		<footer>
+			<p>
+				Brought to you by <a href="http://twitter.com/salomvary" target="_blank">@salomvary</a> •
+				data source <a href="http://www.met.fu-berlin.de/de/wetter/webcam/" target="_blank">Met FU Berlin</a>
+			</p>
+		</footer>
+	</body>
+</html>
