@@ -38,10 +38,11 @@
 		</style>
 		<script>
 			var yql = 'http://query.yahooapis.com/v1/public/yql?format=json&callback=imageLoaded&q=',
-					query = 'select * from data.uri where url="http://www.met.fu-berlin.de/wetter/webcam/Cam00_prev.jpg"';
-					img = new Image,
-			    canvas = document.createElement("canvas"),
-					ctx = canvas.getContext("2d");
+				query = 'select * from data.uri where url="http://www.met.fu-berlin.de/wetter/webcam/Cam00_prev.jpg"',
+				img = new Image,
+				canvas = document.createElement("canvas"),
+				ctx = canvas.getContext("2d"),
+				favicon;
 
 			function init() {
 				loadImage();
@@ -73,6 +74,24 @@
 					if(colorDistance(rgb, colors[i][1]) < 5) {
 						return colors[i][0];
 					}
+				}
+			}
+
+			function setFavicon(color) {
+				if(! favicon) {
+					favicon = document.createElement('link');
+					favicon.type = 'image/x-icon';
+					favicon.rel = 'icon';
+					document.head.appendChild(favicon);
+				}
+				var canvas = document.createElement('canvas'),
+						ctx;
+				if (canvas.getContext) {
+					canvas.height = canvas.width = 16; // set the size
+					ctx = canvas.getContext('2d');
+					ctx.fillStyle = 'rgb(' + color.join(',') + ')';
+					ctx.fillRect(0, 0, 16, 16);
+					favicon.href = canvas.toDataURL('image/png');
 				}
 			}
 
@@ -115,6 +134,9 @@
 				var target = document.getElementById('color');
 				target.innerHTML = '#' + color.map(function(c) { return c.toString(16); }).join('')
 					+ '<br>' + findNearest(color);
+
+				// update favicon
+				setFavicon(color);
 			}
 		</script>
 	</head>
