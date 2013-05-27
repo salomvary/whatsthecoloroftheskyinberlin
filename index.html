@@ -37,6 +37,7 @@
 			}
 			footer {
 				position: fixed;
+				left: 0;
 				bottom: 0;
 				width: 100%;
 				opacity: .5;
@@ -48,6 +49,7 @@
 				img = new Image,
 				canvas = document.createElement("canvas"),
 				ctx = canvas.getContext("2d"),
+				head = document.querySelector('head'),
 				favicon;
 
 			function init() {
@@ -57,7 +59,7 @@
 			function loadImage() {
 				var script = document.createElement('script');
 				script.src = yql + encodeURIComponent(query);
-				document.head.appendChild(script);
+				head.appendChild(script);
 			}
 
 			function imageLoaded(response) {
@@ -88,7 +90,7 @@
 					favicon = document.createElement('link');
 					favicon.type = 'image/x-icon';
 					favicon.rel = 'icon';
-					document.head.appendChild(favicon);
+					head.appendChild(favicon);
 				}
 				var canvas = document.createElement('canvas'),
 						ctx;
