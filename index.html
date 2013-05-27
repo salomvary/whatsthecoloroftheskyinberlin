@@ -14,6 +14,12 @@
 				font-family: sans-serif;
 				text-align: center;
 				font-size: 12px;
+				height: 100%;
+			}
+			body {
+				background-repeat: no-repeat;
+			 	background-position: center center;
+				background-size: contain;
 			}
 			a {
 				color: inherit;
@@ -103,6 +109,12 @@
 				);
 			}
 
+			function setBackgroundImage(color) {
+				var svg = document.getElementById('svg');
+				document.body.style.backgroundImage = 'url("data:image/svg+xml;utf8,'
+					+ encodeURIComponent(svg.parentNode.innerHTML) + '")';
+			}
+
 			img.onload = function() {
 				canvas.width = img.width;
 				canvas.height = img.height;
@@ -129,7 +141,7 @@
 				});
 
 				// show color
-				document.body.style.background = 'rgb(' + color.join(',') + ')';
+				document.body.style.backgroundColor = 'rgb(' + color.join(',') + ')';
 				document.body.style.color = 'rgb(' + color.map(function(c) { return 255 - c; }).join(',') + ')';
 				var target = document.getElementById('color');
 				target.innerHTML = '#' + color.map(function(c) { return c.toString(16); }).join('')
@@ -137,6 +149,8 @@
 
 				// update favicon
 				setFavicon(color);
+
+				setBackgroundImage(color);
 			}
 		</script>
 	</head>
@@ -151,6 +165,15 @@
 				data source <a href="http://www.met.fu-berlin.de/de/wetter/webcam/" target="_blank">Met FU Berlin</a>
 			</p>
 		</footer>
+		<div style="display:none">
+			<svg width="50" height="500" version="1.1"
+			xmlns="http://www.w3.org/2000/svg" id="svg" fill="#fff">
+				<g opacity="0.2">
+					<polygon points="25,0 40,500 10,500"/>
+					<circle r="25" cx="25" cy="190"/>
+				</g>
+			</svg>
+		</div>
 <script>
 var colors = [
 ["alice blue", [240,248,255]],
