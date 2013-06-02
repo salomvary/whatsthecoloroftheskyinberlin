@@ -3,17 +3,29 @@ var http = require('http');
 var Canvas = require('canvas');
 var colors = require('./colors');
 
-getImage(function(src) {
-	var img = new Canvas.Image();
-	img.src = src;
-	var canvas = new Canvas();
+var MIN_SLEEP = 1 * 60 * 1000;
+var MAX_SLEEP = 3 * 60 * 1000;
 
-	var color = colors.getSkyColor(img, canvas);
-	var hex = colors.hex(color);
-	var name = colors.findNearest(color);
+loop();
 
-	tweet(name + ' ' + hex);
-});
+function loop() {
+	getImage(function(src) {
+		var img = new Canvas.Image();
+		img.src = src;
+		var canvas = new Canvas();
+
+		var color = colors.getSkyColor(img, canvas);
+		var hex = colors.hex(color);
+		var name = colors.findNearest(color);
+
+		tweet(name + ' ' + hex);
+	});
+
+	var sleep = Math.round(MIN_SLEEP + Math.random() * (MAX_SLEEP - MIN_SLEEP));
+	console.log('sleeping ' + (sleep / 60 / 1000) + ' minutes, see you at ' +
+							new Date(sleep + new Date().valueOf()).toString());
+	setTimeout(loop, sleep);
+}
 
 function getImage(callback) {
 	var url = 'http://www.met.fu-berlin.de/wetter/webcam/Cam00_prev.jpg';
