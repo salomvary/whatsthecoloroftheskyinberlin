@@ -33,7 +33,7 @@ function getSkyColor(img, canvas) {
 }
 
 function hex(color) {
-	return '#' + color.map(function(c) { return c.toString(16); }).join('');
+	return color.map(function(c) { return c.toString(16); }).join('');
 }
 
 function findNearest(rgb) {

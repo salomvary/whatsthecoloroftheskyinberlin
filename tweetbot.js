@@ -3,8 +3,8 @@ var http = require('http');
 var Canvas = require('canvas');
 var colors = require('./colors');
 
-var MIN_SLEEP = 1 * 60 * 1000;
-var MAX_SLEEP = 3 * 60 * 1000;
+var MIN_SLEEP = 1 * 60 * 60 * 1000;
+var MAX_SLEEP = 3 * 60 * 60 * 1000;
 
 loop();
 
@@ -18,7 +18,8 @@ function loop() {
 		var hex = colors.hex(color);
 		var name = colors.findNearest(color);
 
-		tweet(name + ' ' + hex);
+		tweet(name + ' #' + hex);
+		updateColors(hex);
 	});
 
 	var sleep = Math.round(MIN_SLEEP + Math.random() * (MAX_SLEEP - MIN_SLEEP));
@@ -48,21 +49,27 @@ function getImage(callback) {
 	});
 }
 
+function updateColors(color) {
+	twitter('account/update_profile_colors.json', {
+		profile_background_color: color
+	});
+}
+
 function tweet(text) {
+	twitter('statuses/update.json', {status: text});
+}
+
+function twitter(path, body) {
 	var signer = oauth.createHmac(
 		oauth.createConsumer(process.env.CONSUMER_KEY, process.env.CONSUMER_SECRET),
 		oauth.createToken(process.env.TOKEN, process.env.TOKEN_SECRET)
 	);
 
-	var body = {
-		status: text
-	};
-
 	var request = {
 			port: 443,
 			host: 'api.twitter.com',
 			https: true,
-			path: '/1.1/statuses/update.json',
+			path: '/1.1/' + path,
 			oauth_signature: signer,
 			method: 'POST',
 			body: body
@@ -70,9 +77,13 @@ function tweet(text) {
 
 	var req = oauth.request(request, function(res) {
 		if(res.statusCode != 200) {
-			console.log('http error: ' + res.statusCode);
+			console.log('http error on ' + path, body, res.statusCode);
+			res.setEncoding('utf8');
+			res.on('data', function(chunk) {
+				console.log(chunk);
+			});
 		} else {
-			console.log('tweeted: ' + text);
+			console.log('success ' + path, body);
 		}
 	});
 	req.write(body);

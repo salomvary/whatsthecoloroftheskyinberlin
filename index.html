@@ -96,7 +96,7 @@
 				document.body.style.backgroundColor = 'rgb(' + color.join(',') + ')';
 				document.body.style.color = 'rgb(' + color.map(function(c) { return 255 - c; }).join(',') + ')';
 				var target = document.getElementById('color');
-				target.innerHTML = hex(color)
+				target.innerHTML = '#' + hex(color)
 					+ '<br>' + findNearest(color);
 
 				// update favicon
