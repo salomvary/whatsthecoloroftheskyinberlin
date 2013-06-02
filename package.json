@@ -1,0 +1,9 @@
+{
+  "name": "whatcoloristheskyinberlin",
+  "version": "0.0.0",
+  "description": "What color is the sky in berlin?",
+  "dependencies": {
+    "canvas": "~1.0.2",
+    "oauth-client": "~0.3.0"
+  }
+}
