@@ -3,8 +3,10 @@ var http = require('http');
 var Canvas = require('canvas');
 var colors = require('./colors');
 
-var MIN_SLEEP = 1 * 60 * 60 * 1000;
-var MAX_SLEEP = 3 * 60 * 60 * 1000;
+var MIN_SLEEP = 0.5 * 60 * 60 * 1000;
+var MAX_SLEEP = 1.5 * 60 * 60 * 1000;
+
+var lastColor;
 
 loop();
 
@@ -17,9 +19,13 @@ function loop() {
 		var color = colors.getSkyColor(img, canvas);
 		var hex = colors.hex(color);
 		var name = colors.findNearest(color);
-
-		tweet(name + ' #' + hex);
-		updateColors(hex);
+		if(lastColor != name) {
+			lastColor = name;
+			tweet(name + ' #' + hex);
+			updateColors(hex);
+		} else {
+			console.log('not tweeting ' + name + ' again');
+		}
 	});
 
 	var sleep = Math.round(MIN_SLEEP + Math.random() * (MAX_SLEEP - MIN_SLEEP));
